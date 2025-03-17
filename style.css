@@ -1,0 +1,21 @@
+.node {
+    padding: 1rem;
+    outline: solid 1px #152543;
+    display: inline-block;
+    position: absolute;
+}
+
+.point {
+    position: absolute;
+    padding: 1px;
+    transform: translate(-50%, -50%);
+    outline: solid 2px crimson;
+    border-radius: 50%;
+}
+
+.line {
+    position: absolute;
+    padding: 0;
+    border-top: solid black 2px;
+    transform-origin: 0 0;
+}

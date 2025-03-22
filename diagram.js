@@ -21,7 +21,7 @@ export function addNode(x, y, prev = []) {
 export function drawNode(x, y) {
     const node = document.createElement("div")
     node.className = "node"
-    node.innerText = "aaaaa"
+    node.innerText = "kebab"
     node.style.left = `${x}px`
     node.style.top = `${y}px`
     return _container.appendChild(node)

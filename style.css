@@ -1,8 +1,31 @@
 .node {
-    padding: 1rem;
-    outline: solid 1px #152543;
-    display: inline-block;
     position: absolute;
+    display: inline-block;
+    background-color: #f8f8f8;
+    outline: solid 1px #152543;
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    user-select: none;
+    cursor: grab;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.node .row {
+    display: flex;
+}
+
+.node .cell {
+    flex: 1;
+    border: 1px solid #999;
+    padding: 0.3rem;
+    text-align: center;
+    min-width: 40px;
+}
+
+.node .name {
+    font-weight: bold;
+    background-color: #ddd;
+    flex: 3;
 }
 
 .point {
@@ -19,3 +42,4 @@
     border-top: solid black 2px;
     transform-origin: 0 0;
 }
+

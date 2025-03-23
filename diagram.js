@@ -5,27 +5,43 @@ export function setContainer(container) {
     _container = container
 }
 
-export function addNode(x, y, prev = []) {
+export function addNode(x, y, prev = [], t, name = `Z${nodes.length}`) {
     const index = nodes.length
-    const node = { index, x, y, prev, next: [], element: null, prevLines: [], postLines: [] }
+    const node = { index, x, y, prev, next: [], element: null, prevLines: [], postLines: [], es: 0, t, ef: 0,
+        ls: 0, r: 0, lf: 0, name}
     nodes.push(node)
 
-    node.element = drawNode(node.x, node.y)
-    drawFirstLines(node)
+    node.element = drawNode(node)
+    requestAnimationFrame(() => drawFirstLines(node))
     registerEvents(node)
 
     return node
 }
 
-
-export function drawNode(x, y) {
+export function drawNode(nodeData) {
     const node = document.createElement("div")
     node.className = "node"
-    node.innerText = "kebab"
-    node.style.left = `${x}px`
-    node.style.top = `${y}px`
+    node.innerHTML = `
+        <div class="row">
+            <div class="cell" data-key="es">${nodeData.es}</div>
+            <div class="cell" data-key="t">${nodeData.t}</div>
+            <div class="cell" data-key="ef">${nodeData.ef}</div>
+        </div>
+        <div class="row">
+            <div class="cell name" colspan="3">${nodeData.name}</div>
+        </div>
+        <div class="row">
+            <div class="cell" data-key="ls">${nodeData.ls}</div>
+            <div class="cell" data-key="r">${nodeData.r}</div>
+            <div class="cell" data-key="lf">${nodeData.lf}</div>
+        </div>
+    `
+    node.style.left = `${nodeData.x}px`
+    node.style.top = `${nodeData.y}px`
     return _container.appendChild(node)
 }
+
+
 
 export function drawLine(start, end, element) {
     const [x1, y1] = start

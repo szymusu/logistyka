@@ -6,9 +6,9 @@ import {
 setContainer(document.querySelector("main"))
 
 
-addNode(200, 300, [], 1, "A")
-addNode(300, 310, [0], 2, "B")
-addNode(210, 310, [], 3, "C")
-addNode(410, 360, [0], 4, "D")
-addNode(510, 260, [3], 5, "E")
-addNode(510, 360, [1, 2, 3], 6, "F")
+addNode(200, 200, [], 1, "A")
+addNode(500, 100, [0], 2, "B")
+addNode(500, 250, [], 3, "C")
+addNode(500, 400, [0], 4, "D")
+addNode(800, 400, [3], 5, "E")
+addNode(800, 150, [1, 2, 3], 6, "F")

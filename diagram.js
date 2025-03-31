@@ -2,13 +2,58 @@ let _container
 const nodes = []
 const columns = [0]
 
-const MIN_X = 200
+const MIN_X = 100
 const MIN_Y = 300
-const NODE_WIDTH = 150
-const NODE_HEIGHT = 100
+const NODE_WIDTH = 200
+const NODE_HEIGHT = 150
 
 export function setContainer(container) {
     _container = container
+}
+
+export function addNode(x, y, name = `Z${nodes.length}`, t, prev = []) {
+    const index = nodes.length
+    const node = {
+        index, x, y, prev, t,
+        next: [],
+        element: null,
+        prevLines: [],
+        postLines: [],
+        es: 0,
+        ef: 0,
+        ls: 0,
+        r: 0,
+        lf: 0,
+        name
+    }
+    nodes.push(node)
+    columnize(node)
+    return node
+}
+
+export function drawNode(nodeData) {
+    const node = document.createElement("div")
+    const x = MIN_X + nodeData.column * NODE_WIDTH
+    const y =  NODE_HEIGHT * nodeData.colIndex - columns[nodeData.column] * NODE_HEIGHT / 2 + MIN_Y
+    node.className = "node"
+    node.innerHTML = `
+        <div class="row">
+            <div class="cell" data-key="es">${nodeData.es}</div>
+            <div class="cell" data-key="t">${nodeData.t}</div>
+            <div class="cell" data-key="ef">${nodeData.ef}</div>
+        </div>
+        <div class="row">
+            <div class="cell name" colspan="3">${nodeData.name}</div>
+        </div>
+        <div class="row">
+            <div class="cell" data-key="ls">${nodeData.ls}</div>
+            <div class="cell" data-key="r">${nodeData.r}</div>
+            <div class="cell" data-key="lf">${nodeData.lf}</div>
+        </div>
+    `
+    node.style.left = `${x}px`
+    node.style.top = `${y}px`
+    return _container.appendChild(node)
 }
 
 function columnize(node) {
@@ -22,38 +67,12 @@ function columnize(node) {
     node.colIndex = columns[maxCol]++
 }
 
-export function addNode(x, y, name, duration, prev = []) {
-    const index = nodes.length
-    const node = {
-        index, x, y, prev,
-        name, duration,
-        next: [],
-        element: null,
-        prevLines: [],
-        postLines: []
-    }
-    nodes.push(node)
-    columnize(node)
-    return node
-}
-
 export function drawNodes() {
     for (const node of nodes) {
         node.element = drawNode(node)
-        drawFirstLines(node)
+        requestAnimationFrame(() => drawFirstLines(node))
         registerEvents(node)
     }
-}
-
-export function drawNode(node) {
-    const element = document.createElement("div")
-    element.className = "node"
-    element.innerText = `${node.name} ${node.column} ${node.colIndex}`
-    const x = MIN_X + node.column * NODE_WIDTH
-    const y =  NODE_HEIGHT * node.colIndex - columns[node.column] * NODE_HEIGHT / 2 + MIN_Y
-    element.style.left = `${x}px`
-    element.style.top = `${y}px`
-    return _container.appendChild(element)
 }
 
 export function drawLine(start, end, element) {

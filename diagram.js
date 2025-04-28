@@ -11,10 +11,10 @@ export function setContainer(container) {
     _container = container
 }
 
-export function addNode(x, y, name = `Z${nodes.length}`, t, prev = []) {
+export function addNode(name = `Z${nodes.length}`, t, prev = []) {
     const index = nodes.length
     const node = {
-        index, x, y, prev, t,
+        index, x: 0, y: 0, prev, t,
         next: [],
         element: null,
         prevLines: [],
@@ -173,8 +173,6 @@ export function compute() {
         rerenderNode(node)
     }
 }
-
-document.getElementById("compute").onclick = compute
 
 function computeEarly(node) {
     let earlyStart = 0

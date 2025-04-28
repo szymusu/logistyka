@@ -1,0 +1,10 @@
+START;0;
+A;3;START
+B;5;START
+C;2;A
+D;4;B
+E;3;B
+F;2;C,D
+G;4;E
+H;3;F,G
+I;2;H

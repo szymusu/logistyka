@@ -26,6 +26,9 @@ export function addNode(x, y, name = `Z${nodes.length}`, t, prev = []) {
         lf: 0,
         name
     }
+    for (const prevIndex of prev) {
+        nodes[prevIndex].next.push(nodes.length)
+    }
     nodes.push(node)
     columnize(node)
     return node
@@ -161,25 +164,51 @@ export function registerEvents(node) {
 
 export function compute() {
     const endNode = nodes[nodes.length - 1]
-    computeNode(endNode)
+    computeEarly(endNode)
+
+    const startNode = nodes[0]
+    computeLate(startNode, endNode.ef)
+
+    for (const node of nodes) {
+        rerenderNode(node)
+    }
 }
 
 document.getElementById("compute").onclick = compute
 
-function computeNode(node) {
+function computeEarly(node) {
     let earlyStart = 0
     for (const prevIndex of node.prev) {
-        computeNode(nodes[prevIndex])
+        computeEarly(nodes[prevIndex])
         if (nodes[prevIndex].ef > earlyStart) {
             earlyStart = nodes[prevIndex].ef
         }
     }
     node.es = earlyStart
     node.ef = earlyStart + node.t
-    rerenderNode(node)
+}
+
+function computeLate(node, finish) {
+    let lateFinish = finish
+    for (const nextIndex of node.next) {
+        computeLate(nodes[nextIndex], finish)
+        if (nodes[nextIndex].ls < lateFinish) {
+            lateFinish = nodes[nextIndex].ls
+        }
+    }
+    node.lf = lateFinish
+    node.ls = lateFinish - node.t
+    node.r = node.ls - node.es
 }
 
 function rerenderNode(node) {
+    if (node.r === 0) {
+        node.element.classList.add("critical")
+        console.log(node.r)
+    }
     node.element.querySelector(".es").innerText = node.es
     node.element.querySelector(".ef").innerText = node.ef
+    node.element.querySelector(".ls").innerText = node.ls
+    node.element.querySelector(".lf").innerText = node.lf
+    node.element.querySelector(".r").innerText = node.r
 }

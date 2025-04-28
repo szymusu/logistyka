@@ -1,13 +1,18 @@
 .node {
     position: absolute;
     display: inline-block;
-    background-color: #f8f8f8;
+    background-color: #fff;
     outline: solid 1px #152543;
     font-family: sans-serif;
     font-size: 0.8rem;
     user-select: none;
     cursor: grab;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.critical {
+    outline: solid 2px #582671;
+    background-color: #d3b0e1;
 }
 
 .node .row {

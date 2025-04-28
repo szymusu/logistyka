@@ -48,6 +48,18 @@
     transform-origin: 0 0;
 }
 
+.line::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid black;
+    position: absolute;
+    right: 0;
+    top: -6px;
+}
+
 .legend {
     position: fixed;
     top: 10px;

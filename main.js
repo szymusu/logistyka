@@ -49,8 +49,7 @@ function readText(text = "") {
 document.getElementById("read").onclick = () => {
     const input = document.querySelector("textarea")
     const text = input.value
-    input.hidden = true
-    document.getElementById("read").hidden = true
+    document.getElementById("input").hidden = true
     readText(text.trim())
     drawNodes()
     compute()

@@ -5,7 +5,7 @@ const columns = [0]
 const MIN_X = 100
 const MIN_Y = 300
 const NODE_WIDTH = 200
-const NODE_HEIGHT = 150
+const NODE_HEIGHT = 110
 
 export function setContainer(container) {
     _container = container
@@ -38,17 +38,17 @@ export function drawNode(nodeData) {
     node.className = "node"
     node.innerHTML = `
         <div class="row">
-            <div class="cell" data-key="es">${nodeData.es}</div>
-            <div class="cell" data-key="t">${nodeData.t}</div>
-            <div class="cell" data-key="ef">${nodeData.ef}</div>
+            <div class="cell es" data-key="es">${nodeData.es}</div>
+            <div class="cell t" data-key="t">${nodeData.t}</div>
+            <div class="cell ef" data-key="ef">${nodeData.ef}</div>
         </div>
         <div class="row">
             <div class="cell name" colspan="3">${nodeData.name}</div>
         </div>
         <div class="row">
-            <div class="cell" data-key="ls">${nodeData.ls}</div>
-            <div class="cell" data-key="r">${nodeData.r}</div>
-            <div class="cell" data-key="lf">${nodeData.lf}</div>
+            <div class="cell ls" data-key="ls">${nodeData.ls}</div>
+            <div class="cell r" data-key="r">${nodeData.r}</div>
+            <div class="cell lf" data-key="lf">${nodeData.lf}</div>
         </div>
     `
     node.style.left = `${x}px`
@@ -157,4 +157,29 @@ export function registerEvents(node) {
             document.onmouseup = null
         }
     }
+}
+
+export function compute() {
+    const endNode = nodes[nodes.length - 1]
+    computeNode(endNode)
+}
+
+document.getElementById("compute").onclick = compute
+
+function computeNode(node) {
+    let earlyStart = 0
+    for (const prevIndex of node.prev) {
+        computeNode(nodes[prevIndex])
+        if (nodes[prevIndex].ef > earlyStart) {
+            earlyStart = nodes[prevIndex].ef
+        }
+    }
+    node.es = earlyStart
+    node.ef = earlyStart + node.t
+    rerenderNode(node)
+}
+
+function rerenderNode(node) {
+    node.element.querySelector(".es").innerText = node.es
+    node.element.querySelector(".ef").innerText = node.ef
 }

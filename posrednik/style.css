@@ -1,0 +1,14 @@
+.row {
+    outline: 1px solid blue;
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+}
+
+div {
+    outline: 1px solid red;
+    min-width: 40px;
+    min-height: 40px;
+    align-content: center;
+    text-align: center;
+}

@@ -1,18 +1,39 @@
+.table {
+    display: inline-block;
+    border: 2px solid #00ff3c;
+    font-family: sans-serif;
+}
 .row {
-    outline: 1px solid blue;
     display: flex;
-    flex-direction: row;
-    width: fit-content;
+}
+.cell {
+    border: 1px solid #ff00fb;
+    width: 60px;
+    height: 50px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .table {
     margin: 2rem;
 }
-
-div {
-    outline: 1px solid red;
-    min-width: 40px;
-    min-height: 40px;
-    align-content: center;
-    text-align: center;
+.gray {
+    background-color: #bbb;
+}
+.purple {
+    background-color: #d3b0e1;
+}
+.corner {
+    position: absolute;
+    font-size: 12px;
+}
+.top-left {
+    top: 2px;
+    left: 4px;
+}
+.bottom-right {
+    bottom: 2px;
+    right: 4px;
 }

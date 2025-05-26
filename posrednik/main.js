@@ -13,7 +13,7 @@ function makeTable(sellers, buyers, primaryMatrix, secondaryMatrix) {
     for (const buyer of buyers) {
         buyerHeader += doubleCell(buyer.amount, buyer.name)
     }
-    // buyerHeader += doubleCell("0", "FO") + cell("α")
+    buyerHeader += cell("α")
 
     let buyerPrices = `
         <div class="cell gray"></div>
@@ -86,24 +86,38 @@ function getMatrixIndex(sellerIndex, buyerIndex) {
     return sellerIndex * buyers.length + buyerIndex
 }
 
+function findMax(matrix) {
+    let max = matrix[0]
+    let maxIndex = 0
+    for (let i = 1; i < matrix.length; i++) {
+        if (matrix[i] > max) {
+            max = matrix[i]
+            maxIndex = i
+        }
+    }
+    const row = Math.floor(maxIndex / buyers.length)
+    const col = maxIndex % buyers.length
+    return { row, col, value: max }
+}
+
 function calculateProfit() {
     const profit = new Array(transport.length)
     for (let i = 0; i < sellers.length; i++) {
         const buyPrice = sellers[i].price
 
         for (let j = 0; j < buyers.length; j++) {
-            const sellPrice = buyers[i].price
+            const sellPrice = buyers[j].price
 
             const matrixIndex = getMatrixIndex(i, j)
             profit[matrixIndex] = sellPrice - buyPrice - transport[matrixIndex]
         }
     }
-    renderTable(profit)
+    return profit
 }
 
 function balanceDemand() {
-    const totalSupply = sellers.reduce((total, v) => total + v.price, 0)
-    const totalDemand = buyers.reduce((total, v) => total + v.price, 0)
+    const totalSupply = sellers.reduce((total, v) => total + v.amount, 0)
+    const totalDemand = buyers.reduce((total, v) => total + v.amount, 0)
 
     if (totalSupply === totalDemand) return
 
@@ -138,8 +152,9 @@ const transport = [
 const iksy = transport.map(_ => "x")
 
 balanceDemand()
-console.log(transport)
 
 renderTable(transport)
 
-calculateProfit()
+const profit = calculateProfit()
+renderTable(profit)
+console.log(findMax(profit))

@@ -25,6 +25,9 @@
 .purple {
     background-color: #d3b0e1;
 }
+.red {
+    background-color: #e1b0b6;
+}
 .corner {
     position: absolute;
     font-size: 12px;

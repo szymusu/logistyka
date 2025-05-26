@@ -1,10 +1,5 @@
-function renderTable(sellers, buyers) {
+function makeTable(sellers, buyers, primaryMatrix, secondaryMatrix) {
     const el = document.createElement("div");
-
-    const cellValues = [
-        [ { top: 'x', bottom: 0 }, { top: 'x', bottom: 0 }, { top: 'x', bottom: 0 } ],
-        [ { top: 'x', bottom: 0 }, { top: 'x', bottom: 0 }, { top: 'x', bottom: 0 } ],
-    ];
 
     const foValues = ['0', '0'];
     const alphaValues = [0, 0, 0];
@@ -18,31 +13,29 @@ function renderTable(sellers, buyers) {
         <div class="cell gray"></div>
     `;
     for (const buyer of buyers) {
-        buyerHeader += `<div class="cell">${buyer.name}</div>`;
+        buyerHeader += doubleCell(buyer.amount, buyer.name)
     }
-    buyerHeader += `<div class="cell">FO</div><div class="cell">α</div>`;
+    buyerHeader += doubleCell("0", "FO") + cell("α")
 
     let buyerPrices = `
         <div class="cell gray"></div>
         <div class="cell gray"></div>
     `;
     for (const buyer of buyers) {
-        buyerPrices += `<div class="cell">${buyer.price}</div>`;
+        buyerPrices += cell(buyer.price);
     }
-    buyerPrices += `<div class="cell">0</div><div class="cell"></div>`;
+    buyerPrices += cell("0") + cell();
 
     let dataRows = "";
     for (let i = 0; i < sellers.length; i++) {
-        let row = `<div class="cell">${sellers[i].name}</div><div class="cell">${sellers[i].price}</div>`;
+        let row = doubleCell(sellers[i].amount, sellers[i].name) + cell(sellers[i].price)
 
         for (let j = 0; j < buyers.length; j++) {
-            const { top, bottom } = cellValues[i][j];
-            row += `
-                <div class="cell purple">
-                    <div class="corner top-left">${top}</div>
-                    <div class="corner bottom-right">${bottom}</div>
-                </div>
-            `;
+            const index = getMatrixIndex(i, j)
+            row += secondaryMatrix ?
+                doubleCell(secondaryMatrix[index], primaryMatrix[index], "purple")
+                :
+                cell(primaryMatrix[index], "purple")
         }
 
         row += `<div class="cell">${foValues[i]}</div>`;
@@ -51,16 +44,13 @@ function renderTable(sellers, buyers) {
         dataRows += `<div class="row">${row}</div>`;
     }
 
-    let fdRow = `<div class="cell">FD</div><div class="cell">0</div>`;
-    for (let j = 0; j < buyers.length; j++) {
-        fdRow += `<div class="cell">${fdCellValues[j]}</div>`;
+    let fdRow = doubleCell(0, "FD") + cell("0");
+    for (let i = 0; i < buyers.length; i++) {
+        fdRow += cell(fdCellValues[i]);
     }
-    fdRow += `<div class="cell">${fdFoValue}</div><div class="cell">${fdAlpha}</div>`;
+    fdRow += cell(fdFoValue) + cell(fdAlpha)
 
-    let betaRow = '';
-    for (const val of betaValues) {
-        betaRow += `<div class="cell">${val}</div>`;
-    }
+    const betaRow = betaValues.reduce((res, val) => res + cell(val), "")
 
     el.className = "table";
     el.innerHTML = `
@@ -73,17 +63,69 @@ function renderTable(sellers, buyers) {
     return el;
 }
 
+function cell(content, className) {
+    if (content === undefined) content = ""
+    return `<div class="cell ${className}">${content}</div>`
+}
+
+function doubleCell(topLeft, bottomRight, className) {
+    return `
+        <div class="cell ${className}">
+            <div class="corner top-left">${topLeft}</div>
+            <div class="corner bottom-right">${bottomRight}</div>
+        </div>`
+}
+
+function renderTable(primaryMatrix, secondaryMatrix) {
+    main.appendChild(makeTable(sellers, buyers, primaryMatrix, secondaryMatrix))
+}
+
+function getTransportCost(sellerIndex, buyerIndex) {
+    return transport[getMatrixIndex(sellerIndex, buyerIndex)]
+}
+
+function getMatrixIndex(sellerIndex, buyerIndex) {
+    return sellerIndex * buyers.length + buyerIndex
+}
+
+function calculateProfit() {
+    const profit = new Array(transport.length)
+    for (let i = 0; i < sellers.length; i++) {
+        const buyPrice = sellers[i].price
+
+        for (let j = 0; j < buyers.length; j++) {
+            const sellPrice = buyers[i].price
+
+            const matrixIndex = getMatrixIndex(i, j)
+            profit[matrixIndex] = sellPrice - buyPrice - transport[matrixIndex]
+        }
+    }
+    renderTable(profit)
+}
+
+
 const main = document.querySelector("main");
 
 const sellers = [
-    { name: "D1", price: 21 },
-    { name: "D2", price: 37 },
+    { name: "D1", price: 21, amount: 10 },
+    { name: "D2", price: 37, amount: 11 },
 ];
 
 const buyers = [
-    { name: "O1", price: 1 },
-    { name: "O2", price: 2 },
-    { name: "O3", price: 3 },
+    { name: "O1", price: 1, amount: 20 },
+    { name: "O2", price: 2, amount: 7 },
+    { name: "O3", price: 3, amount: 3 },
 ];
 
-main.appendChild(renderTable(sellers, buyers));
+// const transport = new Array(sellers.length * buyers.length)
+const transport = [
+    1, 2, 3,
+    4, 5, 6,
+]
+
+const iksy = transport.map(_ => "x")
+
+
+renderTable(transport)
+
+calculateProfit()

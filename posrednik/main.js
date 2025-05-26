@@ -1,4 +1,4 @@
-function renderTable(sellers, buyers) {
+function makeTable(sellers, buyers, matrix) {
     const el = document.createElement("div")
 
     let sellerCells = ""
@@ -20,15 +20,15 @@ function renderTable(sellers, buyers) {
     }
 
     let transportMatrix = '<div class="row" style="background-color: #d3b0e1">'
-    for (let i = 0; i < transport.length; i++) {
-        transportMatrix += `<div>${transport[i]}</div>`
-        if ((i + 1) % buyers.length === 0 && i + 1 !== transport.length) {
+    for (let i = 0; i < matrix.length; i++) {
+        transportMatrix += `<div>${matrix[i]}</div>`
+        if ((i + 1) % buyers.length === 0 && i + 1 !== matrix.length) {
             transportMatrix += '</div><div class="row" style="background-color: #d3b0e1">'
         }
     }
     transportMatrix += "</div>"
 
-    el.className = "row"
+    el.className = "row table"
     el.innerHTML = `
     
     <div>
@@ -50,15 +50,19 @@ function renderTable(sellers, buyers) {
     return el
 }
 
+function renderTable(matrix) {
+    main.appendChild(makeTable(sellers, buyers, matrix))
+}
+
 const main = document.querySelector("main")
 const sellers = [
     { name: "D1", price: 21 },
     { name: "D2", price: 37 },
 ]
 const buyers = [
-    { name: "O1", price: 2.99 },
-    { name: "O2", price: 2.90 },
-    { name: "O3", price: 3.14 },
+    { name: "O1", price: 40 },
+    { name: "O2", price: 41 },
+    { name: "O3", price: 33 },
 ]
 // const transport = new Array(sellers.length * buyers.length)
 const transport = [
@@ -67,7 +71,28 @@ const transport = [
 ]
 
 function getTransportCost(sellerIndex, buyerIndex) {
-    return transport[sellerIndex * buyers.length + buyerIndex]
+    return transport[getMatrixIndex(sellerIndex, buyerIndex)]
 }
 
-main.appendChild(renderTable(sellers, buyers))
+function getMatrixIndex(sellerIndex, buyerIndex) {
+    return sellerIndex * buyers.length + buyerIndex
+}
+
+function calculateProfit() {
+    const profit = new Array(transport.length)
+    for (let i = 0; i < sellers.length; i++) {
+        const buyPrice = sellers[i].price
+
+        for (let j = 0; j < buyers.length; j++) {
+            const sellPrice = buyers[i].price
+
+            const matrixIndex = getMatrixIndex(i, j)
+            profit[matrixIndex] = sellPrice - buyPrice - transport[matrixIndex]
+        }
+    }
+    renderTable(profit)
+}
+
+renderTable(transport)
+
+calculateProfit()

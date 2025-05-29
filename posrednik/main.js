@@ -23,7 +23,15 @@ function makeTable(sellers, buyers, primaryMatrix, secondaryMatrix, highlight) {
 
         for (let j = 0; j < buyers.length; j++) {
             const index = getMatrixIndex(i, j)
-            const className = highlight?.matrix === index ? "red" : "purple"
+            let className = "purple"
+            if (highlight?.matrix) {
+                if (Array.isArray(highlight.matrix) && highlight.matrix.includes(index)) {
+                    className = "red"
+                }
+                else if (highlight.matrix === index) {
+                    className = "yellow"
+                }
+            }
             row += secondaryMatrix ?
                 doubleCell(secondaryMatrix[index], primaryMatrix[index], className)
                 :
@@ -130,28 +138,57 @@ function balanceDemand() {
     transport.push(0, ...sellers.map(_ => 0))
 }
 
+function random(min, max) {
+    return Math.round(Math.random() * (max - min) + min)
+}
 
 const main = document.querySelector("main");
 
-const sellers = [
-    { name: "D1", price: 7, amount: 20 },
-    { name: "D2", price: 8, amount: 40 },
-];
+const sellerCount = random(2, 10)
+const buyerCount = random(2, 10)
 
-const buyers = [
-    { name: "O1", price: 18, amount: 16 },
-    { name: "O2", price: 16, amount: 12 },
-    { name: "O3", price: 15, amount: 24 },
-];
+const sellers = []
+const buyers = []
+const transport = []
 
-// const transport = new Array(sellers.length * buyers.length)
-const transport = [
-    4, 7, 2,
-    8, 10, 4,
-]
+for (let i = 0; i < sellerCount; i++) {
+    sellers.push({
+        name: "D" + i + 1,
+        price: random(1, 100),
+        amount: random(1, 100)
+    })
+}
 
-const iksy = transport.map(_ => "x")
+for (let i = 0; i < buyerCount; i++) {
+    buyers.push({
+        name: "O" + i + 1,
+        price: random(1, 100),
+        amount: random(1, 100)
+    })
+}
 
+for (let i = 0; i < sellerCount; i++) {
+    for (let j = 0; j < buyerCount; j++) {
+        transport.push(random(1, 100))
+    }
+}
+
+// const sellers = [
+//     { name: "D1", price: 7, amount: 20 },
+//     { name: "D2", price: 8, amount: 40 },
+// ];
+//
+// const buyers = [
+//     { name: "O1", price: 18, amount: 16 },
+//     { name: "O2", price: 16, amount: 12 },
+//     { name: "O3", price: 15, amount: 24 },
+// ];
+//
+// // const transport = new Array(sellers.length * buyers.length)
+// const transport = [
+//     4, 7, 2,
+//     8, 10, 4,
+// ]
 
 balanceDemand()
 
@@ -197,7 +234,7 @@ let totalProfit = 0
 for (let i = 0; i < transactions.length; i++) {
     totalProfit += transactions[i] * profit[i]
 }
-alert(totalProfit)
+// alert(totalProfit)
 
 // zakładamy se tak
 const ALPHA_START = 0
@@ -240,8 +277,16 @@ while (alphaValues.includes(undefined) || betaValues.includes(undefined)) {
 // kryterialne
 const kryterialne = new Int32Array(profit.length)
 
+let wrong = []
 for (let i = 0; i < kryterialne.length; i++) {
     kryterialne[i] = profit[i] - alphaValues[Math.floor(i / betaValues.length)] - betaValues[i % betaValues.length]
+    if (kryterialne[i] > 0) {
+        wrong.push(i)
+    }
 }
 
-renderTable(kryterialne)
+if (wrong.length) {
+    alert(wrong)
+}
+
+renderTable(kryterialne, undefined, { matrix: wrong })

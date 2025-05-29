@@ -28,6 +28,9 @@
 .red {
     background-color: #e1b0b6;
 }
+.yellow {
+    background-color: #d1bb8c;
+}
 .corner {
     position: absolute;
     font-size: 12px;
